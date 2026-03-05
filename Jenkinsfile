@@ -21,6 +21,12 @@ pipeline {
             }
         }
 
+        stage('Set Kubernetes Context') {
+            steps {
+                sh 'kubectl config use-context kind-dev-cluster'
+            }
+        }
+
         stage('Deploy to Kubernetes') {
             steps {
                 sh 'kubectl apply -f k8s/deployment.yaml'
