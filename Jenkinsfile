@@ -1,13 +1,9 @@
 pipeline {
     agent any
 
-    environment {
-        DOCKER_IMAGE = "dockerhubusername/flask-app"
-    }
-
     stages {
 
-        stage('Clone Repository') {
+        stage('Clone Code') {
             steps {
                 git 'https://github.com/naveengadde123/K8s-CI-CD-deployment'
             }
@@ -15,15 +11,13 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $DOCKER_IMAGE:latest .'
+                sh 'docker build -t flask-app:latest .'
             }
         }
 
-        stage('Push Docker Image') {
+        stage('Load Image to Kind') {
             steps {
-                withDockerRegistry([credentialsId: 'dockerhub', url: '']) {
-                    sh 'docker push $DOCKER_IMAGE:latest'
-                }
+                sh 'kind load docker-image flask-app:latest --name dev-cluster'
             }
         }
 
@@ -31,6 +25,13 @@ pipeline {
             steps {
                 sh 'kubectl apply -f k8s/deployment.yaml'
                 sh 'kubectl apply -f k8s/service.yaml'
+            }
+        }
+
+        stage('Verify Deployment') {
+            steps {
+                sh 'kubectl get pods'
+                sh 'kubectl get svc'
             }
         }
     }
