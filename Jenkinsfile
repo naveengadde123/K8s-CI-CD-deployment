@@ -5,7 +5,7 @@ pipeline {
 
         stage('Clone Code') {
             steps {
-                git 'https://github.com/naveengadde123/K8s-CI-CD-deployment'
+                check out scm 
             }
         }
 
