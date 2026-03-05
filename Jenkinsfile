@@ -5,7 +5,7 @@ pipeline {
 
         stage('Clone Code') {
             steps {
-                check out scm 
+                checkout scm
             }
         }
 
